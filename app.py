@@ -42,7 +42,7 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    show_id = db.Column(db.Integer, db.ForeignKey('Shows.id'), nullable=False)
+    show_id = db.Column(db.Integer, db.ForeignKey('Shows.id'), nullable=True)
 
 
 class Artist(db.Model):
@@ -59,7 +59,7 @@ class Artist(db.Model):
     website_link = db.Column(db.String(250))
     seeking_venue = db.Column(db.String(10), nullable=True)
     seeking_description = db.Column(db.Text())
-    show_id = db.Column(db.Integer, db.ForeignKey('Shows.id'), nullable=False)
+    show_id = db.Column(db.Integer, db.ForeignKey('Shows.id'), nullable=True)
 
 
 class Show(db.Model):
