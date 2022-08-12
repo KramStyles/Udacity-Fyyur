@@ -39,9 +39,13 @@ class Venue(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
+    genres = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
+    website_link = db.Column(db.String(250))
     facebook_link = db.Column(db.String(120))
+    seeking_talent = db.Column(db.String(10), nullable=True)
+    seeking_description = db.Column(db.Text())
     show_id = db.Column(db.Integer, db.ForeignKey('Shows.id'), nullable=True)
 
 
@@ -239,15 +243,19 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    # TODO: insert form data as a new Venue record in the db, instead
-    # TODO: modify data to be the data object returned from db insertion
-
-    # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    return render_template('pages/home.html')
+    try:
+        info = request.form
+        data = Venue(**info)
+        db.session.add(data)
+        db.session.commit()
+        # on successful db insert, flash success
+        flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    except Exception as err:
+        db.session.rollback()
+        flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed. Reason: ' + str(err))
+    finally:
+        db.session.close()
+        return render_template('pages/home.html')
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -443,8 +451,6 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
     # called upon submitting the new artist listing form
-    # TODO: insert form data as a new Venue record in the db, instead
-    # TODO: modify data to be the data object returned from db insertion
     try:
         info = request.form
         data = Artist(**info)
@@ -453,7 +459,6 @@ def create_artist_submission():
         # on successful db insert, flash success
         flash('Artist ' + request.form['name'] + ' was successfully listed!')
     except Exception as err:
-        # TODO: on unsuccessful db insert, flash an error instead.
         db.session.rollback()
         flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed. Reason: ' + str(err))
     finally:
