@@ -56,6 +56,9 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website_link = db.Column(db.String(250))
+    seeking_venue = db.Column(db.String(10), nullable=True)
+    seeking_description = db.Column(db.Text())
     show_id = db.Column(db.Integer, db.ForeignKey('Shows.id'), nullable=False)
 
 
@@ -443,7 +446,8 @@ def create_artist_submission():
     # TODO: insert form data as a new Venue record in the db, instead
     # TODO: modify data to be the data object returned from db insertion
     try:
-        data = Artist(**request.form)
+        info = request.form
+        data = Artist(**info)
         db.session.add(data)
         db.session.commit()
         # on successful db insert, flash success
